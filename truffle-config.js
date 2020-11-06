@@ -1,5 +1,5 @@
 const HDWalletProvider = require('@truffle/hdwallet-provider');
-const privateKey = '';
+const privateKey = '2D49FFFBBB1A133AE70F3D2B071952B7FF75721E5EDDD9DD999B3DB90D064914';
 
 module.exports = {
     networks: {
@@ -20,10 +20,21 @@ module.exports = {
             provider: function () {
                 return new HDWalletProvider(
                     privateKey,
-                    'https://rinkeby.infura.io/v3/'
+                    'https://rinkeby.infura.io/v3/d3fd0e52a2af43fab31303f9c87c3030'
                 );
             },
             gasPrice: 9000000000,
+            network_id: '*',
+            gas: 6000000,
+        },
+        mainnet: {
+            provider: function () {
+                return new HDWalletProvider(
+                    privateKey,
+                    'https://mainnet.infura.io/v3/d3fd0e52a2af43fab31303f9c87c3030'
+                );
+            },
+            gasPrice: '0x12A05F2000',
             network_id: '*',
             gas: 6000000,
         },
@@ -45,7 +56,7 @@ module.exports = {
     },
     compilers: {
         solc: {
-            version: "0.4.26"
+            version: "0.6.6"
         }
     }
 };

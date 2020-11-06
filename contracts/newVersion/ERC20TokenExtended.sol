@@ -1,9 +1,9 @@
-pragma solidity ^0.4.26;
+pragma solidity 0.6.6;
 
-import "../ERC20Interface.sol";
-import "../SafeMath.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/math/SafeMath.sol";
 
-contract ERC20TokenExtended is ERC20Interface {
+contract ERC20TokenExtended is IERC20 {
 
     using SafeMath for uint256;
 
@@ -14,7 +14,7 @@ contract ERC20TokenExtended is ERC20Interface {
     uint256 internal totalTokenIssued;
     mapping(address => uint256) internal balances;
     mapping(address => mapping (address => uint256)) internal allowed;
-    ERC20Interface prevContract;
+    IERC20 prevContract;
 
     modifier migrateBalance(address _owner) {
         if ( !migratedBalances[_owner] ) {
@@ -35,16 +35,17 @@ contract ERC20TokenExtended is ERC20Interface {
     }
 
     constructor(address _prevContract) public {
-        prevContract = ERC20Interface(_prevContract);
+        prevContract = IERC20(_prevContract);
     }
 
-    function totalSupply() public view returns (uint256) {
+    function totalSupply() public virtual override view returns (uint256) {
         return totalTokenIssued;
     }
 
     /* Get the account balance for an address */
     function balanceOf(address _owner)
     public
+    override
     view
     returns (uint256) {
 
@@ -58,6 +59,8 @@ contract ERC20TokenExtended is ERC20Interface {
     /* Transfer the balance from owner's account to another account */
     function transfer(address _to, uint256 _amount)
         public
+        override
+        virtual
         migrateBalance(msg.sender)
         migrateBalance(_to)
         returns (bool)
@@ -82,6 +85,7 @@ contract ERC20TokenExtended is ERC20Interface {
     /* Allow _spender to withdraw from your account up to _amount */
     function approve(address _spender, uint256 _amount)
         public
+        override
         returns (bool)
     {
 
@@ -99,6 +103,8 @@ contract ERC20TokenExtended is ERC20Interface {
     /* Must be pre-approved by owner */
     function transferFrom(address _from, address _to, uint256 _amount)
         public
+        override
+        virtual
         migrateAllowance(_from, msg.sender)
         migrateBalance(msg.sender)
         migrateBalance(_from)
@@ -126,6 +132,7 @@ contract ERC20TokenExtended is ERC20Interface {
     /* that can be transferred by spender */
     function allowance(address _owner, address _spender)
     public
+    override
     view
     returns (uint256) {
 
