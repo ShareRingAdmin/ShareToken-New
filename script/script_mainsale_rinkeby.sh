@@ -1,0 +1,1 @@
+npm run mainsale-rinkeby
