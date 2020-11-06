@@ -103,11 +103,45 @@ contract('ShareToken Testcase', function ([OWNER, NEW_OWNER, RECIPIENT, ANOTHER_
         await this.token.sell(accounts[1], 300,{from:accounts[2]})
 
 
+
         assert.equal(await this.token.balanceOf.call(accounts[1]), 300);
         assert.equal(await this.newToken.balanceOf.call(accounts[1]), 300);
         await this.token.approve(accounts[2], 200, {from:accounts[1]});
         assert.equal(await this.token.allowance(accounts[1], accounts[2]), 200);
         assert.equal(await this.newToken.allowance(accounts[1], accounts[2]), 200);
+    })
+    it('check tokens allowance+ transferFrom', async function(){
+        const totalSupply = await this.token.totalSupply();
+        assert.equal(totalSupply.toNumber(), 0);
+        assert.equal(await this.newToken.balanceOf.call(accounts[1]), 0);
+        await this.token.setIcoContract(accounts[2],{from:accounts[0]});
+        await this.token.sell(accounts[1], 300,{from:accounts[2]})
+        await this.token.sell(accounts[3], 50,{from:accounts[2]})
+
+        assert.equal(await this.token.balanceOf.call(accounts[1]), 300);
+        assert.equal(await this.newToken.balanceOf.call(accounts[1]), 300);
+        await this.token.approve(accounts[2], 200, {from:accounts[1]});
+        assert.equal(await this.token.allowance.call(accounts[1], accounts[2]), 200);
+        assert.equal(await this.newToken.allowance(accounts[1], accounts[2]), 200);
+        await this.newToken.unlockMainSaleToken( {from:accounts[0]});
+        await this.newToken.transferFrom(
+            accounts[1],
+            accounts[3],
+            100,
+            {from: accounts[2]}
+        );
+        assert.equal(await this.newToken.balanceOf.call(accounts[3]), 150);
+        assert.equal(await this.newToken.balanceOf.call(accounts[1]), 200);
+        assert.equal(await this.newToken.balanceOf.call(accounts[2]), 0);
+        await this.newToken.transferFrom(
+            accounts[1],
+            accounts[3],
+            20,
+            {from: accounts[2]}
+        );
+        assert.equal(await this.newToken.balanceOf.call(accounts[3]), 170);
+        assert.equal(await this.newToken.balanceOf.call(accounts[1]), 180);
+        assert.equal(await this.newToken.balanceOf.call(accounts[2]), 0);
     })
 
 });

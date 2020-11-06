@@ -42,8 +42,8 @@ contract ShareTokenExtended is ERC20TokenExtended, WhiteListManager {
         // This requires the legacy ShareToken is completely locked
         // no change made on *rewardTokenLocked* variable
         if (!migratedRewardTokenLocked[_addr]) {
-            rewardTokenLocked[_addr] = ShareToken(prevContract).rewardTokenLocked(_addr);
             migratedRewardTokenLocked[_addr] = true;
+            rewardTokenLocked[_addr] = ShareToken(prevContract).rewardTokenLocked(_addr);
         }
         _;
     }
@@ -51,10 +51,10 @@ contract ShareTokenExtended is ERC20TokenExtended, WhiteListManager {
         public
         ERC20TokenExtended(_prevContract)
     {
-        totalTokenIssued = 0;
-        airDropTokenIssuedTotal = 0;
-        bountyTokenIssuedTotal = 0;
-        seedAndPresaleTokenIssuedTotal = 0;
+        totalTokenIssued = ShareToken(_prevContract).totalSupply();
+        airDropTokenIssuedTotal = ShareToken(_prevContract).airDropTokenIssuedTotal();
+        bountyTokenIssuedTotal = ShareToken(_prevContract).bountyTokenIssuedTotal();
+        seedAndPresaleTokenIssuedTotal = ShareToken(_prevContract).seedAndPresaleTokenIssuedTotal();
         mainSaleTokenLocked = true;
     }
 
@@ -97,7 +97,6 @@ contract ShareTokenExtended is ERC20TokenExtended, WhiteListManager {
     // Check if a given address is locked. The address can be in the whitelist or in the reward
     function isLocked(address addr)
     public
-    migrateRewardTokenLocked(addr)
     view
     returns (bool)
     {
@@ -138,7 +137,12 @@ contract ShareTokenExtended is ERC20TokenExtended, WhiteListManager {
         return seedAndPresaleTokenIssuedTotal;
     }
 
-    function transfer(address _to, uint256 _amount) public returns (bool success) {
+    function transfer(address _to, uint256 _amount)
+        public
+        migrateRewardTokenLocked(msg.sender)
+        migrateRewardTokenLocked(_to)
+        returns (bool success)
+    {
 
         require(isLocked(msg.sender) == false);
         require(isLocked(_to) == false);
@@ -146,7 +150,13 @@ contract ShareTokenExtended is ERC20TokenExtended, WhiteListManager {
         return super.transfer(_to, _amount);
     }
 
-    function transferFrom(address _from, address _to, uint256 _amount) public returns (bool success) {
+    function transferFrom(address _from, address _to, uint256 _amount)
+        public
+        migrateRewardTokenLocked(msg.sender)
+        migrateRewardTokenLocked(_from)
+        migrateRewardTokenLocked(_to)
+        returns (bool success)
+    {
 
         require(isLocked(_from) == false);
         require(isLocked(_to) == false);
