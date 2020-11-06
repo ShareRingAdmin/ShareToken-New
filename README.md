@@ -42,7 +42,7 @@ Structure of inheritance the same as was before, only smart contracts were chang
 # Start 
 ### Download
 
-`git clone "link"`
+`git clone https://romanzakharuk@bitbucket.org/applicature/sharering.git`
 
 ### Install NodeJS and npm if not available
 `curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -`\
