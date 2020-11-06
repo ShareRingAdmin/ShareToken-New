@@ -1,0 +1,26 @@
+// Start to run with Rinkeby testnet
+pm2 start script_rinkeby.sh
+
+// Start to run with Mainnet testnet
+pm2 start script_mainnet.sh
+
+// Start to run with local blockchain
+pm2 start script_dev.sh
+
+// Check status
+pm2 status
+
+// View log
+pm2 log <pid>
+
+// Flush log
+pm2 flush
+
+// Stop process
+pm2 stop <pid>
+
+// Delete process
+pm2 delete <pid>
+
+// Delete all
+pm2 delete all
