@@ -1,33 +1,32 @@
-var assertRevert = require('../helpers/assertRevert.js');
-var expectEvent = require('../helpers/expectEvent.js');
-var utilities = require('../helpers/utilities.js');
-var constants = require('../config/ShareTokenFigures.js');
+let assertRevert = require('../helpers/assertRevert.js');
+let expectEvent = require('../helpers/expectEvent.js');
+let utilities = require('../helpers/utilities.js');
+let constants = require('../config/ShareTokenFigures.js');
 
-const ShareToken = artifacts.require('ShareToken');
-var ShareTokenExtended = artifacts.require('./newVersion/ShareTokenExtended.sol');
-const MainSale = artifacts.require('MainSale');
-const Whitelist = artifacts.require('WhiteListManager');
+let ShareTokenExtended = artifacts.require('./newVersion/ShareTokenExtended.sol');
+let ShareTokenMock = artifacts.require('./mock/ShareTokenMock.sol');
+const MainSale = artifacts.require('./mock/MainSaleMock.sol');
 
 
 //*****************************************************************************************
 //                          UTILITIES
 //*****************************************************************************************
-var getBalance = utilities.getBalance
-var sellToAccount = utilities.sellToAccount
+let getBalance = utilities.getBalance
+let sellToAccount = utilities.sellToAccount
 
 //*****************************************************************************************
 //                         TEST CASES
 //*****************************************************************************************
 
 contract('ShareToken Testcase', function ([OWNER, NEW_OWNER, RECIPIENT, ANOTHER_ACCOUNT]) {
-    var accounts = [OWNER, NEW_OWNER, RECIPIENT, ANOTHER_ACCOUNT];
+    let accounts = [OWNER, NEW_OWNER, RECIPIENT, ANOTHER_ACCOUNT];
     console.log("OWNER: ", OWNER);
     console.log("NEW OWNER: ", NEW_OWNER);
     console.log("RECIPIENT: ", RECIPIENT);
     console.log("ANOTHER ACCOUNT:", ANOTHER_ACCOUNT);
 
     beforeEach(async function () {
-        this.token = await ShareToken.new();
+        this.token = await ShareTokenMock.new();
         this.newToken = await ShareTokenExtended.new(this.token.address);
 
         this.mainsale = await MainSale.new()
@@ -37,7 +36,7 @@ contract('ShareToken Testcase', function ([OWNER, NEW_OWNER, RECIPIENT, ANOTHER_
 
 
         // add to whitelist
-        for (var i = 0; i < accounts.length; i++) {
+        for (let i = 0; i < accounts.length; i++) {
             await this.token.set(accounts[i]);
         }
 
